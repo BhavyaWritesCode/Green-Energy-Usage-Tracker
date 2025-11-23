@@ -2,7 +2,7 @@ import os
 import threading
 import tkinter as tk
 from tkinter import ttk, messagebox, scrolledtext
-import sv_ttk  # Modern theme engine
+import sv_ttk
 
 from data_operations import register_user, login_user, add_energy_usage, fetch_energy_usage_by_user, month_exists
 from analytics import get_full_analytics
@@ -12,28 +12,22 @@ from utils import is_valid_email, to_float, clean_string
 from config import MONTHS
 
 
-# Ensure graph directory exists
 GRAPH_DIR = os.path.join("assets", "graphs")
 os.makedirs(GRAPH_DIR, exist_ok=True)
 
 
-# MAIN APPLICATION CLASS 
 class EnergyApp(tk.Tk):
     def __init__(self):
         super().__init__()
 
-        # WINDOW CONFIG
         self.title("Green Energy Usage Tracker")
         self.geometry("1000x650")
         self.minsize(1000, 650)
 
-        # Apply modern theme
-        sv_ttk.set_theme("dark")     # choose light / dark
+        sv_ttk.set_theme("dark")
 
-        # Track logged-in user
         self.current_user = None
 
-        # Container for frames
         self.container = ttk.Frame(self)
         self.container.pack(fill="both", expand=True)
 
@@ -54,7 +48,6 @@ class EnergyApp(tk.Tk):
         self.current_user = user_dict
 
 
-# START / WELCOME SCREEN
 class StartFrame(ttk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
@@ -87,7 +80,6 @@ class StartFrame(ttk.Frame):
                    command=controller.quit).grid(row=3, column=0, pady=20)
 
 
-# REGISTER SCREEN
 class RegisterFrame(ttk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
@@ -142,7 +134,6 @@ class RegisterFrame(ttk.Frame):
             messagebox.showerror("Error", "Email already exists!")
 
 
-# LOGIN SCREEN
 class LoginFrame(ttk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
@@ -187,7 +178,6 @@ class LoginFrame(ttk.Frame):
             messagebox.showerror("Error", "Invalid credentials!")
 
 
-# DASHBOARD SCREEN
 class DashboardFrame(ttk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
@@ -213,7 +203,6 @@ class DashboardFrame(ttk.Frame):
         right = ttk.Frame(content)
         right.pack(side="right", fill="both", expand=True, padx=15)
 
-        # Sidebar buttons
         buttons = [
             ("Add Monthly Usage", self.add_usage_window),
             ("View Analytics", self.show_analytics),
@@ -225,7 +214,6 @@ class DashboardFrame(ttk.Frame):
             ttk.Button(left, text=text, width=24,
                        command=func).pack(pady=12)
 
-        # Info box
         self.info_area = scrolledtext.ScrolledText(
             right, wrap=tk.WORD, font=("Consolas", 10),
             width=70, height=28
@@ -243,7 +231,6 @@ class DashboardFrame(ttk.Frame):
         self.controller.set_user(None)
         self.controller.show_frame("StartFrame")
 
-    # -------------------- Add Usage -------------------------
     def add_usage_window(self):
         user = self.controller.current_user
         if not user:
@@ -297,7 +284,6 @@ class DashboardFrame(ttk.Frame):
         ttk.Button(form, text="Submit", command=submit).grid(
             row=4, column=0, columnspan=2, pady=20)
 
-    # -------------------- Show Analytics -------------------------
     def show_analytics(self):
         user = self.controller.current_user
         analytics = get_full_analytics(user["user_id"])
@@ -316,7 +302,6 @@ class DashboardFrame(ttk.Frame):
 
         self._set_info(text)
 
-    # -------------------- Show Recommendations -------------------------
     def show_recommendations(self):
         user = self.controller.current_user
         data = fetch_energy_usage_by_user(user["user_id"])
@@ -333,7 +318,6 @@ class DashboardFrame(ttk.Frame):
 
         self._set_info(text)
 
-    # -------------------- Generate Visuals -------------------------
     def generate_visuals_thread(self):
         threading.Thread(target=self.generate_visuals, daemon=True).start()
 
@@ -350,7 +334,6 @@ class DashboardFrame(ttk.Frame):
 
         self._set_info(text)
 
-    # -------------------- Update Info Box -------------------------
     def _set_info(self, content):
         self.info_area.config(state="normal")
         self.info_area.delete("1.0", "end")
@@ -358,7 +341,6 @@ class DashboardFrame(ttk.Frame):
         self.info_area.config(state="disabled")
 
 
-# RUN APP
 if __name__ == "__main__":
     app = EnergyApp()
     app.mainloop()
