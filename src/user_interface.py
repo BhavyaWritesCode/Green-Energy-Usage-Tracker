@@ -5,13 +5,11 @@ from data_operations import (
     fetch_energy_usage_by_user,
     month_exists
 )
-
 from analytics import get_full_analytics
 from recommendation import generate_recommendations
 from config import MONTHS
 
 
-# LOGIN SCREEN
 def login_screen():
     print("\n====== LOGIN ======")
     email = input("Email: ").strip()
@@ -27,7 +25,6 @@ def login_screen():
         return None
 
 
-# REGISTRATION SCREEN
 def register_screen():
     print("\n====== REGISTER ======")
     name = input("Full Name: ").strip()
@@ -43,11 +40,9 @@ def register_screen():
         print("\nRegistration failed! Email may already be registered.\n")
 
 
-# ADD MONTHLY USAGE (INPUT FORM)
 def add_usage_screen(user_id):
     print("\n====== ADD MONTHLY USAGE ======\n")
 
-    # Show month list
     print("Available Months:")
     for idx, m in enumerate(MONTHS):
         print(f"{idx + 1}. {m}")
@@ -59,7 +54,6 @@ def add_usage_screen(user_id):
         print("\nInvalid choice!")
         return
 
-    # Prevent duplicate entry
     if month_exists(user_id, month):
         print("\nYou have already entered usage for this month!")
         return
@@ -80,16 +74,17 @@ def add_usage_screen(user_id):
         print("\nFailed to add usage!\n")
 
 
-# VIEW ANALYTICS
 def view_analytics(user_id):
     print("\n====== ANALYTICS ======\n")
     analytics = get_full_analytics(user_id)
 
     print("----- Monthly Summary -----")
     for entry in analytics["monthly_summary"]:
-        print(f"{entry['month']}: Elec={entry['electricity_kwh']} kWh, "
-              f"Water={entry['water_liters']} L, Solar={entry['solar_units']} units, "
-              f"Carbon={entry['carbon_footprint']} kgCO₂")
+        print(
+            f"{entry['month']}: Elec={entry['electricity_kwh']} kWh, "
+            f"Water={entry['water_liters']} L, Solar={entry['solar_units']} units, "
+            f"Carbon={entry['carbon_footprint']} kgCO₂"
+        )
 
     print("\n----- Averages -----")
     print(analytics["average_usage"])
@@ -101,7 +96,6 @@ def view_analytics(user_id):
     print(analytics["month_comparison"])
 
 
-# VIEW RECOMMENDATIONS
 def view_recommendations(user_id):
     print("\n====== RECOMMENDATIONS ======\n")
 
@@ -111,10 +105,7 @@ def view_recommendations(user_id):
         print("No usage data found! Add usage first.\n")
         return
 
-    # Current month = last entry
     current = usage_records[-1]
-
-    # Previous month = second last entry (if exists)
     previous = usage_records[-2] if len(usage_records) > 1 else None
 
     recs = generate_recommendations(current, previous)
@@ -126,7 +117,6 @@ def view_recommendations(user_id):
     print("\n")
 
 
-# USER DASHBOARD MENU
 def user_dashboard(user):
     user_id = user["user_id"]
 

@@ -1,13 +1,13 @@
 def generate_recommendations(current_data, previous_data=None):
-
     recs = []
 
-    elec = current_data["electricity_kwh"]
-    water = current_data["water_liters"]
-    solar = current_data["solar_units"]
-    carbon = current_data["carbon_footprint"]
+    # Safely extract values (None → 0)
+    elec = current_data.get("electricity_kwh") or 0
+    water = current_data.get("water_liters") or 0
+    solar = current_data.get("solar_units") or 0
+    carbon = current_data.get("carbon_footprint") or 0
 
-    # Electricity-based recommendations
+    # ELECTRICITY RECOMMENDATIONS
     if elec > 250:
         recs.append(
             "Your electricity usage is high. Consider using LED lighting, minimizing AC usage, "
@@ -15,17 +15,16 @@ def generate_recommendations(current_data, previous_data=None):
         )
 
     if previous_data:
-        if elec > previous_data["electricity_kwh"]:
+        prev_elec = previous_data.get("electricity_kwh") or 0
+        if elec > prev_elec:
             recs.append(
                 "Electricity usage has increased compared to last month. Review refrigerator settings, "
                 "AC temperature, and check for unnecessary standby power."
             )
         else:
-            recs.append(
-                "Good job! Your electricity usage decreased compared to last month."
-            )
+            recs.append("Good job! Your electricity usage decreased compared to last month.")
 
-    # Water usage recommendations
+    # WATER USAGE RECOMMENDATIONS
     if water > 3500:
         recs.append(
             "Your water consumption is above recommended levels. Fix leaking taps, take shorter showers, "
@@ -33,16 +32,13 @@ def generate_recommendations(current_data, previous_data=None):
         )
 
     if previous_data:
-        if water > previous_data["water_liters"]:
-            recs.append(
-                "Water usage increased this month. Try reducing wastage and check for leaks."
-            )
+        prev_water = previous_data.get("water_liters") or 0
+        if water > prev_water:
+            recs.append("Water usage increased this month. Try reducing wastage and check for leaks.")
         else:
-            recs.append(
-                "Nice! Your water usage is lower than last month."
-            )
+            recs.append("Nice! Your water usage is lower than last month.")
 
-    # Solar generation recommendations
+    # SOLAR GENERATION RECOMMENDATIONS
     if solar < 10:
         recs.append(
             "Your solar generation is low. Clean the solar panels and ensure they are not shaded by trees or structures."
@@ -53,18 +49,15 @@ def generate_recommendations(current_data, previous_data=None):
             "Excellent solar energy generation! You are significantly reducing your carbon footprint."
         )
 
-    # Carbon footprint recommendations
-    
+    # CARBON FOOTPRINT RECOMMENDATIONS
     if carbon > 4:
         recs.append(
             "Your carbon footprint is high. Reduce heavy electricity usage and try shifting to renewable sources."
         )
     elif carbon < 2:
-        recs.append(
-            "Great job! Your carbon footprint is very low this month."
-        )
+        recs.append("Great job! Your carbon footprint is very low this month.")
 
-    # If no recommendations generated:
+    # FALLBACK
     if not recs:
         recs.append("Your usage is stable. Keep maintaining energy-efficient habits!")
 
