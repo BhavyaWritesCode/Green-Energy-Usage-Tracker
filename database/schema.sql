@@ -1,7 +1,5 @@
--- Creates tables only if they do not exist
 -- Database: green_energy_data
 
--- Select database
 USE green_energy_data;
 
 -- USERS TABLE
